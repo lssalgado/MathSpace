@@ -103,15 +103,15 @@ function scene:show( event )
         self.view:insert(invisibleMenuButton)
         invisibleMenuButton:setFillColor(0,0,1)
 
-        local pointsDisplay = display.newText({
-            text = points, 
-            x = display.contentCenterX, 
-            y = 50, 
-            -- width = 128,
-            font = native.systemFont,   
-            fontSize = 48,
-            align = "right"})
-        self.view:insert(pointsDisplay)
+        -- local pointsDisplay = display.newText({
+        --     text = points, 
+        --     x = display.contentCenterX, 
+        --     y = 50, 
+        --     -- width = 128,
+        --     font = native.systemFont,   
+        --     fontSize = 48,
+        --     align = "right"})
+        -- self.view:insert(pointsDisplay)
 
         local playerShip = display.newPolygon(display.contentWidth * 0.5, display.contentHeight -30, {-10,0, 10,0, 0,-30})
         self.view:insert(playerShip)
@@ -145,18 +145,50 @@ function scene:show( event )
         end
 
         function startShipsTest(lines)
+            k = 1
             for i=1, lines do
                 for j=1, lines do
                     print(j+i)
-                    local shipToInsert = display.newRect(groupShips.x + 20*j, 15*i, 10, 10)
-                    shipToInsert:setFillColor(0, 0.16*j,0)
-                    shipToInsert.points = j*i
+                    -- local shipToInsert = display.newRect(groupShips.x + 35*j, 30*i, 25, 25)
+                    shipToInsertPoints = math.random( 1,99 )
+                    local shipToInsert = display.newText({
+                        text = shipToInsertPoints, 
+                        x = groupShips.x + 35*j, 
+                        y = 30*i, 
+                        width = 25,
+                        height = 25,
+                        font = native.systemFont,   
+                        fontSize = 12,
+                        align = "center"})
+                    shipToInsert:setFillColor(0.16*j, 0.16*j,0.16*j)
+                    if i == 6 then
+                        shipToInsert.last = true
+                    else
+                        shipToInsert.last = false
+                    end
+                    shipToInsert.position = k
+                    shipToInsert.points = shipToInsertPoints
                     table.insert(ship,shipToInsert)
+                    k = k + 1
                 end
             end
         end
 
         startShipsTest(6)
+
+        function createOperation()
+
+            local pointsDisplay = display.newText({
+                text = points, 
+                x = display.contentCenterX, 
+                y = 50, 
+                -- width = 128,
+                font = native.systemFont,   
+                fontSize = 48,
+                align = "right"})
+            self.view:insert(pointsDisplay)
+
+        end
 
         for k,v in pairs(ship) do
             print(k, v)
@@ -209,30 +241,79 @@ function scene:show( event )
 
         toRight()
 
-        function operation(shipPoints)
-            if actualOperation == 'mult' then
-
-            elseif actualOperation == 'plus' then
-                points = points - shipPoints
-                if points < 0 then
-                    pointsDisplay:setFillColor(1,0,0)
-                    -- physics.stop()
-                else
-                    pointsDisplay.text = points
+        function newOperation()
+            possibleNumbers = {}
+            arraySize = 1
+            for k,v in pairs(ship) do
+                if v.last == true then
+                    table.insert( possibleNumbers,v.points )
+                    arraySize = arraySize + 1
                 end
-
-            elseif actualOperation == 'min' then
             end
+            operationToUse = math.random( 1,3 )
+            if operationToUse == 1 then
+                operationToUse = ' + '
+            elseif operationToUse == 2 then
+                operationToUse = ' - '
+            elseif operationToUse == 3 then
+                operationToUse = ' * '
+            end
+            firstNumber = math.random( 1, arraySize)
+            secondNumber = math.random( 1, arraySize-1)
+            if secondNumber == firstNumber then
+                while secondNumber == firstNumber do
+                    secondNumber = math.random( 1, arraySize-1)
+                end
+            end
+            operationText = possibleNumbers[firstNumber] .. operationToUse .. possibleNumbers[secondNumber]
+            pointsDisplay = display.newText({
+                text = operationText, 
+                x = display.contentCenterX, 
+                y = 50, 
+                -- width = 128,
+                font = native.systemFont,   
+                fontSize = 48,
+                align = "right"})
+            self.view:insert(pointsDisplay)
+
+
+        end
+        newOperation()
+        function operation(shipHit)
+            if shipHit.last == true then
+                shipHit.last = false
+                if ship[shipHit.position - 6] then
+                    -- print(ship[shipHit.position - 6].last)
+                    ship[shipHit.position - 6].last = true
+                    pointsDisplay:removeSelf()
+                    newOperation()
+                end
+            end
+            -- if actualOperation == 'mult' then
+
+            -- elseif actualOperation == 'plus' then
+            --     points = points - shipPoints
+            --     if points < 0 then
+            --         -- pointsDisplay:setFillColor(1,0,0)
+            --         -- physics.stop()
+            --     else
+            --         -- pointsDisplay.text = points
+            --     end
+
+            -- elseif actualOperation == 'min' then
+            -- end
         end
 
         function shipHit(event)
             if(event.phase == 'began' and event.other.name=='ship') then
-                print('collision')
-                operation(event.other.points)
+                if event.other.last == true then
+                    print('collision')
+                    operation(event.other)
+                    event.other:removeSelf()
+                    event.other = nil
+                end
                 event.target:removeSelf()
                 event.target = nil
-                event.other:removeSelf()
-                event.other = nil
             end
         end
 
@@ -299,7 +380,7 @@ function scene:show( event )
             end
         end
 
-        -- invisibleFireButton:addEventListener("touch", createProjectile)
+        invisibleFireButton:addEventListener("touch", createProjectile)
         leftWall:addEventListener("collision", invertLinearVelocity)
         rightWall:addEventListener("collision", invertLinearVelocity)
         -- invisibleLeftButton:addEventListener("touch", movePlayerShip)
