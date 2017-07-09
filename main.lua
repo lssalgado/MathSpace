@@ -1,5 +1,15 @@
 local composer = require('composer')
 
+-- local testao = {}
+
+-- local teste = function () print("teste") end
+
+-- testao.teste = teste
+
+-- testao.teste()
+
+local options = {params = {  }}
+
 composer.gotoScene('menu')
 
 -- local physics = require('physics')

@@ -6,17 +6,14 @@ local scene = composer.newScene()
 -- Code outside of the scene event functions below will only be executed ONCE unless
 -- the scene is removed entirely (not recycled) via "composer.removeScene()"
 -- -----------------------------------------------------------------------------------
-
-function goToShips(event)
-    if event.phase == 'began' then
-        print('hide')
-        -- composer.gotoScene('ships')
-        options = { params={ counter=0 } }
-        composer.gotoScene('goldenMat', options)
-    end
+rightCounter = 0
+function restartGoldenMat()
+  options = { params={counter = rightCounter} }
+  composer.removeScene( 'goldenMat' )
+  -- composer.newScene( 'goldenMat' )
+  composer.gotoScene( 'goldenMat', options )
 end
 
- local name = 'Espaço Matemático'
 
 -- -----------------------------------------------------------------------------------
 -- Scene event functions
@@ -26,6 +23,7 @@ end
 function scene:create( event )
 
     local sceneGroup = self.view
+    -- Code here runs when the scene is first created but has not yet appeared on screen
 
 end
 
@@ -38,27 +36,11 @@ function scene:show( event )
 
     if ( phase == "will" ) then
         -- Code here runs when the scene is still off screen (but is about to come on screen)
-        composer.removeScene('ships')
-        -- gameName = display.newText({
-        --     text = name,
-        --     x = display.contentCenterX,
-        --     y = 50,
-        --     -- width = 128,
-        --     font = native.systemFont,
-        --     fontSize = 48,
-        --     align = "right"})
-        background = display.newImageRect("BG.png", display.contentWidth, display.contentHeight - 45)
-        background.x = display.contentCenterX
-        background.y = display.contentCenterY
-        -- sceneGroup:insert(gameName)
-        sceneGroup:insert(background)
+
     elseif ( phase == "did" ) then
         -- Code here runs when the scene is entirely on screen
-
-
-        -- gameName:addEventListener('touch', goToShips)
-        background:addEventListener('touch', goToShips)
-
+        rightCounter = event.params.counter
+        restartGoldenMat()
     end
 end
 
@@ -86,7 +68,6 @@ function scene:destroy( event )
     -- Code here runs prior to the removal of scene's view
 
 end
-
 
 
 -- -----------------------------------------------------------------------------------
