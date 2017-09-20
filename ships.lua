@@ -147,6 +147,18 @@ function scene:show( event )
         groupShips.name = 'group'
         groupShips.gravityScale = 0
 
+        playerPoints = 0
+        playerPontuation = display.newText({
+            text = playerPoints,
+            x = 60,
+            y = 50,
+            -- width = 128,
+            font = native.systemFont,
+            fontSize = 40,
+            align = "right"})
+        playerPontuation:setFillColor(0.16, 0.16,0.16)
+        self.view:insert(playerPontuation)
+
 
         local shipsNumber = 6
 
@@ -167,7 +179,7 @@ function scene:show( event )
 
         function defineEquation(difficulty)
 
-            
+
             if(difficulty == 1) then
                 number1 = math.random( 1,10)
                 number2 = math.random( 1,10)
@@ -197,7 +209,7 @@ function scene:show( event )
 
                 return {equationString, equationResult}
             elseif(operation==3) then
-                equationString = number1 .. " * " .. number2
+                equationString = number1 .. " x " .. number2
                 equationResult = number1 * number2
 
                 return {equationString, equationResult}
@@ -452,10 +464,12 @@ function scene:show( event )
                     print('collision')
                     if(event.other.text == targetValue) then
                         directionalArrow:setFillColor(0,1,0)
+                        playerPontuation.text = playerPontuation.text + 100
                         print(event.other.text .. " CERTOU " .. targetValue)
                         adjustDifficulty(1)
                     else
                         directionalArrow:setFillColor(1,0,0)
+                        playerPontuation.text = playerPontuation.text - 100
                         print(event.other.text   .. " EROU " .. targetValue)
                         adjustDifficulty(0)
                     end

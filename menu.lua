@@ -13,6 +13,14 @@ function goToShips(event)
         -- composer.gotoScene('ships')
         options = { params={ counter=0 } }
         composer.gotoScene('goldenMat', options)
+
+    end
+end
+
+function goToQuiz(event)
+    if event.phase == 'began' then
+      options = {params={rightCounter = 0, wrongCounter = 0, difficulty = 0 }}
+      composer.gotoScene( 'quiz' , options )
     end
 end
 
@@ -57,7 +65,10 @@ function scene:show( event )
 
 
         -- gameName:addEventListener('touch', goToShips)
+
         background:addEventListener('touch', goToShips)
+        -- background:addEventListener('touch', goToQuiz)
+
 
     end
 end

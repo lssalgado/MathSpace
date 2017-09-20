@@ -8,10 +8,9 @@ local scene = composer.newScene()
 -- -----------------------------------------------------------------------------------
 rightCounter = 0
 function restartGoldenMat()
-  options = { params={counter = rightCounter} }
   composer.removeScene( 'goldenMat' )
   -- composer.newScene( 'goldenMat' )
-  composer.gotoScene( 'goldenMat', options )
+  composer.gotoScene( 'goldenMat' )
 end
 
 
@@ -39,7 +38,7 @@ function scene:show( event )
 
     elseif ( phase == "did" ) then
         -- Code here runs when the scene is entirely on screen
-        rightCounter = event.params.counter
+        rightCounter
         restartGoldenMat()
     end
 end

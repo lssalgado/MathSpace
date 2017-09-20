@@ -13,17 +13,39 @@ function goToShips(event)
         -- composer.gotoScene('goldenMat')
 end
 
+function goToQuiz(event)
+      options = {params={rightCounter = 0, wrongCounter = 0, difficulty = 0 }}
+      composer.gotoScene( 'quiz' , options )
+end
+
 function restartLevel()
   rightCounter = rightCounter + 1
-  if rightCounter < 3 then
+  if rightCounter < 9 then
     options = { params={counter = rightCounter} }
-    composer.gotoScene('blankScene', options)
-  elseif rightCounter >= 3 then
-    composer.gotoScene( 'ships' )
+    composer.gotoScene('goldenMat', options)
+  elseif rightCounter >= 9 then
+    goToQuiz()
   end
 
 end
 
+function returnToMenu(event)
+    print('return to menu')
+    if event.phase == 'began' then
+        -- for k,v in pairs(ship) do
+        --     v:setLinearVelocity(0,0)
+        -- end
+        -- composer.removeScene('ships', true)
+        -- composer.gotoScene('menu')
+        local options = {
+            effect = "fade",
+            time = 500,
+            isModal = true,
+            params = {previous = 'goldenMat'}
+        }
+        composer.gotoScene( "menu", options )
+    end
+end
 
 -- -----------------------------------------------------------------------------------
 -- Scene event functions
@@ -48,11 +70,16 @@ function scene:show( event )
         -- Code here runs when the scene is still off screen (but is about to come on screen)
         rightCounter = event.params.counter
         function loadImages()
-
+          physics.stop()
           local background = display.newImageRect("lab.jpg",display.contentWidth,display.contentHeight)
           self.view:insert(background)
           background.x = display.contentCenterX
           background.y = display.contentCenterY
+
+          grayBox = display.newImageRect("gray.png", 300 , 61)
+          self.view:insert(grayBox)
+          grayBox.x = display.contentCenterX
+          grayBox.y = display.contentHeight - 70
 
           ship = display.newImageRect("ship.png", 69, 120)
           self.view:insert(ship)
@@ -60,6 +87,12 @@ function scene:show( event )
           ship.y = display.contentCenterY
           physics.addBody( ship, "dynamic")
           ship.gravityScale = 0
+
+          container = display.newImageRect("container.png", 50, 120)
+          self.view:insert(container)
+          container.x = display.contentCenterX + 65
+          container.y = display.contentCenterY
+
 
           shipFilter1 = display.newImageRect("shipFilter1.png", 69, 40)
           self.view:insert(shipFilter1)
@@ -76,6 +109,55 @@ function scene:show( event )
           shipFilter3.x = display.contentCenterX
           shipFilter3.y = display.contentCenterY - 40
 
+          centena = display.newImageRect("md100.png", 51, 51)
+          centena.x = 70
+          centena.y = 88
+          centena.isVisible = false
+          centena.alpha = 0.0
+          self.view:insert(centena)
+
+          dezenas = {}
+          unidades = {}
+          cheeses = {}
+
+
+          for i=1,10 do
+            print('actual'..i)
+
+            dezena = display.newImageRect("md10.png", 51, 51)
+            dezena.x = 22 + (i * 10)
+            dezena.y = 148
+            dezena.isVisible = false
+            dezena.alpha = 0.0
+            self.view:insert(dezena)
+            dezenas[i] = dezena
+
+            unidade = display.newImageRect("md1.png", 51, 51)
+            unidade.x = 22 + (i * 10)
+            unidade.y = 188
+            unidade.isVisible = false
+            self.view:insert(unidade)
+            unidades[i] = unidade
+
+            if i < 10 then
+              cheese = display.newImageRect("cheese.png", 45, 13)
+              cheese.x = display.contentCenterX + 65
+              cheese.y = display.contentCenterY + 64 - (13*i)
+              cheese.isVisible = false
+              self.view:insert(cheese)
+              cheeses[i] = cheese
+            end
+          end
+
+          for i=1,event.params.counter do
+            cheeses[i].isVisible = true
+          end
+
+          local invisibleMenuButton = display.newImageRect("Settings-Button-2400px.png", 50, 50)
+          invisibleMenuButton.y = 55
+          invisibleMenuButton.x = display.contentWidth - 30
+          self.view:insert(invisibleMenuButton)
+          invisibleMenuButton:addEventListener("touch", returnToMenu)
 
           function removePointsAndTarget()
             if pointsDisplayMD then
@@ -84,6 +166,23 @@ function scene:show( event )
             if targetDisplay then
               targetDisplay:removeSelf()
             end
+            for i=1,10 do
+              unidades[i].isVisible = false
+              dezenas[i].isVisible = false
+            end
+            centena.isVisible = false
+            setPointsAndTarget()
+          end
+
+          function defineValue()
+            if event.params.counter <3 then
+              value = math.random(10, 10)
+            elseif event.params.counter >= 3 and event.params.counter < 6  then
+              value = math.random(10, 10)
+            elseif event.params.counter >= 6 then
+              value = math.random(100, 100)
+            end
+            return value
           end
 
           function setPointsAndTarget()
@@ -109,7 +208,7 @@ function scene:show( event )
                 align = "right"})
 
             math.randomseed( os.time() )
-            targetDisplay.value = math.random(1, 2)
+            targetDisplay.value = defineValue()
             -- targetDisplay.value = 100
             targetDisplay.text = "/".. targetDisplay.value
             self.view:insert(targetDisplay)
@@ -120,6 +219,8 @@ function scene:show( event )
           function updatePointsAndTarget()
 
           end
+
+
 
           md1 = display.newImageRect("md1.png", 51, 51)
           self.view:insert(md1)
@@ -150,6 +251,7 @@ function scene:show( event )
           md100.gravityScale = 0
           md100.originalX = display.contentCenterX + 100
           md100.originalY = display.contentHeight - 70
+
         end
 
         loadImages()
@@ -159,13 +261,13 @@ function scene:show( event )
           for k,v in pairs(event) do
             print (k , v)
           end
-          if event.params.counter >= 1 then
+          if event.params.counter >= 3 then
             shipFilter1:removeSelf()
           end
-          if event.params.counter >= 2 then
+          if event.params.counter >= 6 then
             shipFilter2:removeSelf()
           end
-          if event.params.counter == 3 then
+          if event.params.counter == 9 then
             shipFilter3:removeSelf()
           end
         end
@@ -176,15 +278,17 @@ function scene:show( event )
           if event.phase == "began" then
             originalX = event.target.x
             originalY = event.target.y
+            print("TOQUE COMEÇOU")
           elseif event.phase == "moved" then
              -- then drag our object
             event.target.x = event.x
             event.target.y = event.y
-
+            print("TOQUE MOVEU")
           elseif event.phase == "ended" or event.phase == "cancelled" then
 
             print(event.x .. " " .. display.contentCenterX)
             print(event.y .. " " .. display.contentCenterY)
+            print("TOQUE TERMINOU")
             if event.target.value then
               if event.x < display.contentCenterX + 25 and event.x > display.contentCenterX - 25 then
                 if event.y < display.contentCenterY + 25 and event.y > display.contentCenterY - 25 then
@@ -200,6 +304,14 @@ function scene:show( event )
 
            -- return true so Corona knows that the touch event was handled properly
            return true
+        end
+
+        function dragHandler(event)
+          originalX = event.target.x
+          originalY = event.target.y
+          dragObject(event)
+          event.target.x = event.target.originalX
+          event.target.y = event.target.originalY
         end
 
         oldH = ship.height
@@ -228,27 +340,97 @@ function scene:show( event )
           timer.performWithDelay( 100, reduceShip )
         end
 
+        unidadesVisiveis = 0
+        dezenasVisiveis = 0
+        centenasVisiveis = 0
+
+        function enableUnidade()
+          if unidadesVisiveis + 1 > 9 then
+            unidades[unidadesVisiveis + 1].isVisible = true
+            for i=1,10 do
+              transition.fadeOut(unidades[i], {time=500})
+            end
+            unidadesVisiveis = 0
+            enableDezena(1)
+          else
+            unidades[unidadesVisiveis + 1].isVisible = true
+            unidadesVisiveis = unidadesVisiveis + 1
+          end
+        end
+
+        function enableDezena(fade)
+          print("fade = " .. fade)
+          if fade == 0 then
+            if dezenasVisiveis + 1 > 9 then
+              dezenas[dezenasVisiveis + 1].alpha = 1.0
+              dezenas[dezenasVisiveis + 1].isVisible = true
+              for i=1,10 do
+                transition.fadeOut(dezenas[i], {time=500})
+              end
+              dezenasVisiveis = 0
+              enableCentena(1)
+            else
+              dezenas[dezenasVisiveis + 1].alpha = 1.0
+              dezenas[dezenasVisiveis + 1].isVisible = true
+              dezenasVisiveis = dezenasVisiveis + 1
+            end
+          else
+            if dezenasVisiveis + 1 > 9 then
+              dezenas[dezenasVisiveis + 1].isVisible = true
+              transition.fadeIn(dezenas[dezenasVisiveis + 1], {time=700})
+              for i=1,10 do
+                transition.fadeOut(unidades[i], {time=500})
+              end
+              dezenasVisiveis = 0
+              enableCentena(1)
+            else
+              dezenas[dezenasVisiveis + 1].isVisible = true
+              transition.fadeIn(dezenas[dezenasVisiveis + 1], {time=700})
+              dezenasVisiveis = dezenasVisiveis + 1
+            end
+          end
+        end
+
+        function enableCentena(fade)
+          if fade == 0 then
+            centena.alpha = 1.0
+            centena.isVisible = true
+          else
+            centena.isVisible = true
+            transition.fadeIn(centena, {time=700})
+          end
+        end
+
         function feedShip(amount)
 
+            if amount == 1 then
+              enableUnidade()
+            elseif amount == 10 then
+              enableDezena(0)
+            elseif amount == 100 then
+              enableCentena(0)
+            end
             enlargeShip()
             pointsDisplayMD.text = tonumber(pointsDisplayMD.text)+amount
             if tonumber( pointsDisplayMD.text) == tonumber( targetDisplay.value) then
               pointsDisplayMD:setFillColor(0,1,0)
-              if event.params.counter == 2 then
-                shipFilter3:removeSelf()
-              end
+              -- if event.params.counter == 2 then
+              --   shipFilter3:removeSelf()
+              -- end
               timer.performWithDelay( 1000, removePointsAndTarget )
               timer.performWithDelay( 1000, restartLevel )
             end
 
             if tonumber( pointsDisplayMD.text) > tonumber( targetDisplay.value) then
               pointsDisplayMD:setFillColor(1,0,0)
-              timer.performWithDelay( 500, setPointsAndTarget )
+              timer.performWithDelay( 500, removePointsAndTarget )
               -- targetDisplay.value = math.math.random(1, 500)
               -- targetDisplay.text = "/" .. targetDisplay.value
             end
 
         end
+
+
 
         md1:addEventListener("touch", dragObject)
         md10:addEventListener("touch", dragObject)
