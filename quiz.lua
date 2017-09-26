@@ -25,7 +25,8 @@ function restartLevel()
 
       -- go to ships
       print('hide')
-      composer.gotoScene('ships')
+      options = {params={ difficulty0 = 1, starAmount0= starAmount }}
+      composer.gotoScene( 'ships' , options )
     end
   else
     counter = actualRightCounter

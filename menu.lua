@@ -25,7 +25,7 @@ end
 
 function goToShips(event)
     if event.phase == 'began' then
-      options = {params={ difficulty0 = 4, starAmount0= 100 }}
+      options = {params={ difficulty0 = 1, starAmount0= 100 }}
       composer.gotoScene( 'ships' , options )
     end
 end
@@ -72,9 +72,9 @@ function scene:show( event )
 
         -- gameName:addEventListener('touch', goToGoldenMat)
 
-        -- background:addEventListener('touch', goToGoldenMat)
+        background:addEventListener('touch', goToGoldenMat)
         -- background:addEventListener('touch', goToQuiz)
-        background:addEventListener('touch', goToShips)
+        -- background:addEventListener('touch', goToShips)
 
 
     end
