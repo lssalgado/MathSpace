@@ -7,11 +7,10 @@ local scene = composer.newScene()
 -- the scene is removed entirely (not recycled) via "composer.removeScene()"
 -- -----------------------------------------------------------------------------------
 
-function goToShips(event)
+function goToGoldenMat(event)
     if event.phase == 'began' then
         print('hide')
-        -- composer.gotoScene('ships')
-        options = { params={ counter=0 } }
+        options = { params={ counter=0, combo0=0, starAmount0= 0  } }
         composer.gotoScene('goldenMat', options)
 
     end
@@ -19,8 +18,15 @@ end
 
 function goToQuiz(event)
     if event.phase == 'began' then
-      options = {params={rightCounter = 0, wrongCounter = 0, difficulty = 0 }}
+      options = {params={rightCounter = 0, wrongCounter = 0, difficulty = 0, combo0=0, starAmount0= 0 }}
       composer.gotoScene( 'quiz' , options )
+    end
+end
+
+function goToShips(event)
+    if event.phase == 'began' then
+      options = {params={ difficulty0 = 4, starAmount0= 100 }}
+      composer.gotoScene( 'ships' , options )
     end
 end
 
@@ -64,10 +70,11 @@ function scene:show( event )
         -- Code here runs when the scene is entirely on screen
 
 
-        -- gameName:addEventListener('touch', goToShips)
+        -- gameName:addEventListener('touch', goToGoldenMat)
 
-        background:addEventListener('touch', goToShips)
+        -- background:addEventListener('touch', goToGoldenMat)
         -- background:addEventListener('touch', goToQuiz)
+        background:addEventListener('touch', goToShips)
 
 
     end

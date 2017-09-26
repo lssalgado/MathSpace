@@ -6,11 +6,14 @@ local scene = composer.newScene()
 -- Code outside of the scene event functions below will only be executed ONCE unless
 -- the scene is removed entirely (not recycled) via "composer.removeScene()"
 -- -----------------------------------------------------------------------------------
-rightCounter = 0
-function restartGoldenMat()
-  composer.removeScene( 'goldenMat' )
-  -- composer.newScene( 'goldenMat' )
-  composer.gotoScene( 'goldenMat' )
+difficulty = 0
+starAmount = 0
+function restartShips()
+  print("difficulty0 = " .. difficulty)
+  print("starAmount0 = " .. starAmount)
+  options = {params={ difficulty0 = difficulty, starAmount0= starAmount }}
+  composer.removeScene( 'ships', true )
+  composer.gotoScene( 'ships' , options )
 end
 
 
@@ -38,8 +41,10 @@ function scene:show( event )
 
     elseif ( phase == "did" ) then
         -- Code here runs when the scene is entirely on screen
-        rightCounter
-        restartGoldenMat()
+        starAmount = event.params.starAmount0
+        difficulty = event.params.difficulty0
+        print("blankScene bro")
+        restartShips()
     end
 end
 

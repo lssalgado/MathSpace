@@ -8,8 +8,21 @@ local scene = composer.newScene()
 -- -----------------------------------------------------------------------------------
 
 
+starAmount = 0
+difficulty = 0
+ship = {}
 
-local ship = {}
+function restartLevel()
+  for k in pairs (ship) do
+      ship[k] = nil
+  end
+  print("difficulty0 = " .. difficulty)
+  print("starAmount0 = " .. starAmount)
+  options = {params={ difficulty0 = difficulty, starAmount0= starAmount }}
+  -- composer.gotoScene( 'ships' , options )
+  composer.gotoScene( 'blankScene' , options )
+end
+
 function returnToMenu(event)
     print('return to menu')
     if event.phase == 'began' then
@@ -46,13 +59,14 @@ function scene:show( event )
     local phase = event.phase
 
     if ( phase == "will" ) then
+        starAmount = event.params.starAmount0
         -- Code here runs when the scene is still off screen (but is about to come on screen)
         local physics = require('physics')
         physics.start()
 
         composer.removeHidden()
 
-        difficulty = 4
+        difficulty = event.params.difficulty0
 
         targetValue = 0
 
@@ -65,6 +79,22 @@ function scene:show( event )
         self.view:insert(background)
         background.x = display.contentCenterX
         background.y = display.contentCenterY
+
+        starPoints = display.newImageRect("star1.png", 25, 25)
+        starPoints.x = display.contentWidth - 20
+        starPoints.y = display.contentHeight - 40
+        self.view:insert(starPoints)
+
+        print("starAmount = " .. starAmount)
+        starPointsText = display.newText({
+            text = starAmount,
+            x = display.contentWidth - 52,
+            y = display.contentHeight - 40,
+            -- width = 128,
+            font = native.systemFont,
+            fontSize = 24,
+            align = "right"})
+        self.view:insert(starPointsText)
 
         local invisibleFireButton = display.newRect(display.contentCenterX, display.contentCenterY-45, display.contentWidth, display.contentHeight-100)
         self.view:insert(invisibleFireButton)
@@ -177,25 +207,47 @@ function scene:show( event )
             self.view:insert(6)
         end
 
+        function fixDivision(a,b)
+          number3 = a
+          number4 = b
+          if a % (b+1) == 0 then
+            number3 = a
+            number4 = b + 1
+          elseif (a + 1) % b == 0 then
+            number3 = a + 1
+            number4 = b
+          else
+            fixDivision(number3, (number4 + 1))
+          end
+        end
+
         function defineEquation(difficulty)
 
 
             if(difficulty == 1) then
-                number1 = math.random( 1,10)
-                number2 = math.random( 1,10)
-                operation = math.random(1,2)
+              number1 = math.random( 1,20 )
+              number2 = math.random( 1,10 )
+              number3 = math.random( 1,10 )
+              number4 = math.random( 1,2 )
+              operation = math.random(1,4)
             elseif(difficulty == 2) then
-                number1 = math.random( 1,10)
-                number2 = math.random( 1,100 )
-                operation = math.random(1,2)
+              number1 = math.random( 20,100 )
+              number2 = math.random( 1,20 )
+              number3 = math.random( 1,10 )
+              number4 = math.random( 1,10 )
+              operation = math.random(1,4)
             elseif(difficulty == 3) then
-                number1 = math.random( 1,100 )
-                number2 = math.random( 1,100 )
-                operation = math.random(1,2)
+              number1 = math.random( 20,100 )
+              number2 = math.random( 20,100 )
+              number3 = math.random( 1,30 )
+              number4 = math.random( 1,10 )
+              operation = math.random(1,4)
             elseif(difficulty == 4) then
-                number1 = math.random( 1,10)
-                number2 = math.random( 1,100 )
-                operation = math.random(1,3)
+              number1 = math.random( 1,10 )
+              number2 = math.random( 1,100 )
+              number3 = math.random( 1,50 )
+              number4 = math.random( 1,10 )
+              operation = math.random(1,4)
             end
 
             if(operation==1) then
@@ -204,16 +256,28 @@ function scene:show( event )
 
                 return {equationString, equationResult}
             elseif(operation==2) then
-                equationString = number1 .. " - " .. number2
-                equationResult = number1 - number2
+
+                equationString = math.max(number1, number2) .. " - " .. math.min(number1, number2)
+                equationResult = math.max(number1, number2) - math.min(number1, number2)
 
                 return {equationString, equationResult}
             elseif(operation==3) then
-                equationString = number1 .. " x " .. number2
-                equationResult = number1 * number2
+                equationString = number3 .. " x " .. number4
+                equationResult = number3 * number4
 
                 return {equationString, equationResult}
-            end
+              elseif(operation==4) then
+                  if math.max(number3, number4) % math.min(number3, number4) == 0 then
+                    equationString = math.max(number3, number4) .. " ÷ " .. math.min(number3, number4)
+                    equationResult = math.max(number3, number4) / math.min(number3, number4)
+                  else
+                    fixDivision(math.max(number3, number4),  math.min(number3, number4))
+                    equationString = math.max(number3, number4) .. " ÷ " .. math.min(number3, number4)
+                    equationResult = math.max(number3, number4) / math.min(number3, number4)
+                  end
+
+                  return {equationString, equationResult}
+              end
         end
 
         function startShipsTest(lines)
@@ -292,7 +356,14 @@ function scene:show( event )
         for k,v in pairs(ship) do
             print(k, v)
             v.name = 'ship'
-            self.view:insert(v)
+            for index, data in ipairs(ship) do
+              print(index)
+
+              for key, value in pairs(data) do
+                print('\t', key, value)
+              end
+            end
+            sceneGroup:insert(v)
             physics.addBody( v, "dynamic", {isSensor = true})
             if (v.visibleText) then
               physics.addBody( v.visibleText, "dynamic", {isSensor = true})
@@ -380,41 +451,95 @@ function scene:show( event )
             return ''
         end
 
+        function fadeStar()
+          transition.fadeIn(star, {time=500, onComplete=scaleStar})
+        end
+
+        function scaleStar()
+          transition.scaleTo(star, { xScale=0.5, yScale=0.5, time=200, onComplete=moveStar })
+        end
+
+        function moveStar()
+          transition.moveTo(star, { x=display.contentWidth, y=display.contentHeight-10, time=700 })
+        end
+
+        function drawStars()
+          combo = tonumber(playerPontuation.text)
+          print("combo = " .. combo)
+          if combo < 600 then
+            print("combo = " .. combo)
+            star = display.newImageRect("star1.png", 50, 50)
+            star.x = display.contentCenterX
+            star.y = display.contentCenterY
+            star.alpha = 0
+            fadeStar()
+            self.view:insert(star)
+            combo = 1
+            if difficulty > 1 then
+              difficulty = difficulty - 1
+            end
+            starAmount = starAmount + 1
+          elseif combo >= 600 and combo < 900 then
+            print("combo = " .. combo)
+            star = display.newImageRect("star2.png", 60, 50)
+            star.x = display.contentCenterX
+            star.y = display.contentCenterY
+            star.alpha = 0
+            fadeStar()
+            transition.fadeIn(star, {time=700})
+
+            self.view:insert(star)
+            combo = 2
+            starAmount = starAmount + 2
+          elseif combo >= 900 then
+            print("combo = " .. combo)
+            star = display.newImageRect("star3.png", 80, 50)
+            star.x = display.contentCenterX
+            star.y = display.contentCenterY
+            star.alpha = 0
+            fadeStar()
+            transition.fadeIn(star, {time=700})
+            self.view:insert(star)
+            if difficulty < 4 then
+              difficulty = difficulty + 1
+            end
+            starAmount = starAmount + 3
+          end
+        end
+
         function newOperation()
             possibleNumbers = {}
             arraySize = 0
+            print(">>>>>>>>>> Entrou no newOperation")
             for k,v in pairs(ship) do
                 if v.last == true then
                     table.insert( possibleNumbers,{v.equationToShow, v.text} )
                     arraySize = arraySize + 1
                 end
             end
-            -- local operationToUse = math.random( 1,3 )
 
-            math.randomseed( os.time() )
-            local firstNumber = math.random( 1, arraySize)
-            -- local secondNumber = math.random( 1, arraySize)
-            -- if secondNumber == firstNumber then
-            --     while secondNumber == firstNumber do
-            --         secondNumber = math.random( 1, arraySize)
-            --     end
-            -- end
-            -- -- print(table.concat( possibleNumbers, ", " ))
-            -- -- print('first'..firstNumber)
-            -- -- print('second'..secondNumber)
-            -- print(arraySize)
-            -- -- operationText = possibleNumbers[firstNumber] .. operationToUse .. possibleNumbers[secondNumber]
-            -- operationText = setAndDrawTarget(operationToUse, possibleNumbers[firstNumber], possibleNumbers[secondNumber])
-            targetValue = possibleNumbers[firstNumber][2]
-            pointsDisplay = display.newText({
-                text = possibleNumbers[firstNumber][1],
-                x = display.contentCenterX,
-                y = 50,
-                -- width = 128,
-                font = native.systemFont,
-                fontSize = 48,
-                align = "right"})
-            self.view:insert(pointsDisplay)
+            print("arraySize = " .. arraySize)
+
+            if arraySize == 0 then
+              drawStars()
+              timer.performWithDelay( 2000, restartLevel)
+
+
+            else
+
+              math.randomseed( os.time() )
+              local firstNumber = math.random( 1, arraySize)
+              targetValue = possibleNumbers[firstNumber][2]
+              pointsDisplay = display.newText({
+                  text = possibleNumbers[firstNumber][1],
+                  x = display.contentCenterX,
+                  y = 50,
+                  -- width = 128,
+                  font = native.systemFont,
+                  fontSize = 48,
+                  align = "right"})
+              self.view:insert(pointsDisplay)
+            end
 
 
         end
@@ -427,6 +552,10 @@ function scene:show( event )
                     -- print(ship[shipHit.position - 6].last)
                     ship[shipHit.position - 4].last = true
                     ship[shipHit.position - 4].visibleText.isVisible = true
+                    pointsDisplay:removeSelf()
+                    newOperation()
+                else
+                    --TODO
                     pointsDisplay:removeSelf()
                     newOperation()
                 end
@@ -469,7 +598,9 @@ function scene:show( event )
                         adjustDifficulty(1)
                     else
                         directionalArrow:setFillColor(1,0,0)
-                        playerPontuation.text = playerPontuation.text - 100
+                        if tonumber(playerPontuation.text) >= 100 then
+                          playerPontuation.text = playerPontuation.text - 100
+                        end
                         print(event.other.text   .. " EROU " .. targetValue)
                         adjustDifficulty(0)
                     end

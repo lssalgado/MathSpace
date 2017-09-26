@@ -8,13 +8,15 @@ local scene = composer.newScene()
 -- -----------------------------------------------------------------------------------
 actualRightCounter = 0
 actualWrongCounter = 0
+combo = 0
+starAmount = 0
 function restartLevel()
   if rightOrWrong == true then
     counter = actualRightCounter + 1
     print('actualRightCounter is now ' .. counter)
     print('difficulty was '.. actualDifficulty .. ' and now is ' .. math.ceil(counter/3))
     if counter < 12 then
-      options = { params={rightCounter = counter, wrongCounter = actualWrongCounter, difficulty = math.ceil(counter/4)} }
+      options = { params={rightCounter = counter, wrongCounter = actualWrongCounter, difficulty = math.ceil(counter/4), combo0=combo, starAmount0= starAmount} }
       composer.gotoScene('quiz', options)
     elseif counter >= 12 then
       -- go to goldenMat
@@ -27,7 +29,7 @@ function restartLevel()
     end
   else
     counter = actualRightCounter
-    options = { params={rightCounter = actualRightCounter, wrongCounter = actualWrongCounter, difficulty = math.ceil(counter/4)} }
+    options = { params={rightCounter = actualRightCounter, wrongCounter = actualWrongCounter, difficulty = math.ceil(counter/4), combo0=combo, starAmount0= starAmount} }
     composer.gotoScene('quiz', options)
   end
 
@@ -58,6 +60,8 @@ function scene:show( event )
         actualDifficulty = event.params.difficulty
         actualWrongCounter = event.params.wrongCounter
         actualRightCounter = event.params.rightCounter
+        combo = event.params.combo0
+        starAmount = event.params.starAmount0
         controller = 0
 
     elseif ( phase == "did" ) then
@@ -66,6 +70,22 @@ function scene:show( event )
         self.view:insert(background)
         background.x = display.contentCenterX
         background.y = display.contentCenterY
+
+        starPoints = display.newImageRect("star1.png", 25, 25)
+        starPoints.x = display.contentWidth - 20
+        starPoints.y = display.contentHeight - 40
+        self.view:insert(starPoints)
+
+        print("starAmount = " .. starAmount)
+        starPointsText = display.newText({
+            text = starAmount,
+            x = display.contentWidth - 52,
+            y = display.contentHeight - 40,
+            -- width = 128,
+            font = native.systemFont,
+            fontSize = 24,
+            align = "right"})
+        self.view:insert(starPointsText)
 
         math.randomseed( os.time() )
 
@@ -455,6 +475,56 @@ function scene:show( event )
           self.view:insert(wrong)
         end
 
+        star = {}
+
+        function fadeStar()
+          transition.fadeIn(star, {time=500, onComplete=scaleStar})
+        end
+
+        function scaleStar()
+          transition.scaleTo(star, { xScale=0.5, yScale=0.5, time=200, onComplete=moveStar })
+        end
+
+        function moveStar()
+          transition.moveTo(star, { x=display.contentWidth, y=display.contentHeight-10, time=700 })
+        end
+
+        function drawStars()
+          if combo == 0 then
+            print("combo = " .. combo)
+            star = display.newImageRect("star1.png", 50, 50)
+            star.x = display.contentCenterX
+            star.y = display.contentCenterY
+            star.alpha = 0
+            fadeStar()
+            self.view:insert(star)
+            combo = 1
+            starAmount = starAmount + 1
+          elseif combo == 1 then
+            print("combo = " .. combo)
+            star = display.newImageRect("star2.png", 60, 50)
+            star.x = display.contentCenterX
+            star.y = display.contentCenterY
+            star.alpha = 0
+            fadeStar()
+            transition.fadeIn(star, {time=700})
+
+            self.view:insert(star)
+            combo = 2
+            starAmount = starAmount + 2
+          elseif combo == 2 then
+            print("combo = " .. combo)
+            star = display.newImageRect("star3.png", 80, 50)
+            star.x = display.contentCenterX
+            star.y = display.contentCenterY
+            star.alpha = 0
+            fadeStar()
+            transition.fadeIn(star, {time=700})
+            self.view:insert(star)
+            starAmount = starAmount + 3
+          end
+        end
+
         function checkRight(event)
           -- if event.phase == "began" then
           -- elseif event.phase == "moved" then
@@ -466,7 +536,8 @@ function scene:show( event )
               wrongButton:removeEventListener("tap",checkWrong)
               displayResultCorrect()
               rightOrWrong = true
-              timer.performWithDelay( 200, restartLevel)
+              drawStars()
+              timer.performWithDelay( 2000, restartLevel)
               return
             elseif controller == 0 then
               controller = 1
@@ -474,7 +545,8 @@ function scene:show( event )
               wrongButton:removeEventListener("tap",checkWrong)
               displayResultFalse()
               rightOrWrong = false
-              timer.performWithDelay( 200, restartLevel)
+              combo = 0
+              timer.performWithDelay( 500, restartLevel)
               return
             end
 
@@ -488,14 +560,16 @@ function scene:show( event )
             wrongButton:removeEventListener("tap",checkWrong)
             displayResultCorrect()
             rightOrWrong = true
-            timer.performWithDelay( 200, restartLevel)
+            drawStars()
+            timer.performWithDelay( 2000, restartLevel)
           elseif controller == 0 then
             controller = 1
             rightButton:removeEventListener("tap",checkRight)
             wrongButton:removeEventListener("tap",checkWrong)
             displayResultFalse()
             rightOrWrong = false
-            timer.performWithDelay( 200, restartLevel)
+            combo = 0
+            timer.performWithDelay( 500, restartLevel)
           end
         end
 

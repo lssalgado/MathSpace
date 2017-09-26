@@ -7,6 +7,8 @@ local scene = composer.newScene()
 -- the scene is removed entirely (not recycled) via "composer.removeScene()"
 -- -----------------------------------------------------------------------------------
 rightCounter = 0
+combo = 0
+starAmount = 0
 function goToShips(event)
         print('hide')
         composer.gotoScene('ships')
@@ -14,14 +16,14 @@ function goToShips(event)
 end
 
 function goToQuiz(event)
-      options = {params={rightCounter = 0, wrongCounter = 0, difficulty = 0 }}
+      options = {params={rightCounter = 0, wrongCounter = 0, difficulty = 0, combo0=combo, starAmount0= starAmount }}
       composer.gotoScene( 'quiz' , options )
 end
 
 function restartLevel()
   rightCounter = rightCounter + 1
   if rightCounter < 9 then
-    options = { params={counter = rightCounter} }
+    options = { params={counter = rightCounter, combo0 = combo, starAmount0 = starAmount} }
     composer.gotoScene('goldenMat', options)
   elseif rightCounter >= 9 then
     goToQuiz()
@@ -69,6 +71,8 @@ function scene:show( event )
     if ( phase == "will" ) then
         -- Code here runs when the scene is still off screen (but is about to come on screen)
         rightCounter = event.params.counter
+        combo = event.params.combo0
+        starAmount = event.params.starAmount0
         function loadImages()
           physics.stop()
           local background = display.newImageRect("lab.jpg",display.contentWidth,display.contentHeight)
@@ -115,6 +119,21 @@ function scene:show( event )
           centena.isVisible = false
           centena.alpha = 0.0
           self.view:insert(centena)
+
+          starPoints = display.newImageRect("star1.png", 25, 25)
+          starPoints.x = display.contentWidth - 20
+          starPoints.y = display.contentHeight - 40
+          self.view:insert(starPoints)
+
+          starPointsText = display.newText({
+              text = starAmount,
+              x = display.contentWidth - 52,
+              y = display.contentHeight - 40,
+              -- width = 128,
+              font = native.systemFont,
+              fontSize = 24,
+              align = "right"})
+          self.view:insert(starPointsText)
 
           dezenas = {}
           unidades = {}
@@ -176,11 +195,11 @@ function scene:show( event )
 
           function defineValue()
             if event.params.counter <3 then
-              value = math.random(10, 10)
+              value = math.random(10, 19)
             elseif event.params.counter >= 3 and event.params.counter < 6  then
-              value = math.random(10, 10)
+              value = math.random(25, 75)
             elseif event.params.counter >= 6 then
-              value = math.random(100, 100)
+              value = math.random(100, 159)
             end
             return value
           end
@@ -401,6 +420,61 @@ function scene:show( event )
           end
         end
 
+        star = {}
+
+        function fadeStar()
+          transition.fadeIn(star, {time=500, onComplete=scaleStar})
+        end
+
+        function scaleStar()
+          transition.scaleTo(star, { xScale=0.5, yScale=0.5, time=200, onComplete=moveStar })
+        end
+
+        function moveStar()
+          transition.moveTo(star, { x=display.contentWidth, y=display.contentHeight-10, time=700 })
+        end
+
+        function drawStars()
+
+          md1:removeEventListener("touch", dragObject)
+          md10:removeEventListener("touch", dragObject)
+          md100:removeEventListener("touch", dragObject)
+
+          if combo == 0 then
+            print("combo = " .. combo)
+            star = display.newImageRect("star1.png", 50, 50)
+            star.x = display.contentCenterX
+            star.y = display.contentCenterY
+            star.alpha = 0
+            fadeStar()
+            self.view:insert(star)
+            combo = 1
+            starAmount = starAmount + 1
+          elseif combo == 1 then
+            print("combo = " .. combo)
+            star = display.newImageRect("star2.png", 60, 50)
+            star.x = display.contentCenterX
+            star.y = display.contentCenterY
+            star.alpha = 0
+            fadeStar()
+            transition.fadeIn(star, {time=700})
+
+            self.view:insert(star)
+            combo = 2
+            starAmount = starAmount + 2
+          elseif combo == 2 then
+            print("combo = " .. combo)
+            star = display.newImageRect("star3.png", 80, 50)
+            star.x = display.contentCenterX
+            star.y = display.contentCenterY
+            star.alpha = 0
+            fadeStar()
+            transition.fadeIn(star, {time=700})
+            self.view:insert(star)
+            starAmount = starAmount + 3
+          end
+        end
+
         function feedShip(amount)
 
             if amount == 1 then
@@ -417,12 +491,15 @@ function scene:show( event )
               -- if event.params.counter == 2 then
               --   shipFilter3:removeSelf()
               -- end
+              print("drawstars")
+              drawStars()
               timer.performWithDelay( 1000, removePointsAndTarget )
-              timer.performWithDelay( 1000, restartLevel )
+              timer.performWithDelay( 2000, restartLevel )
             end
 
             if tonumber( pointsDisplayMD.text) > tonumber( targetDisplay.value) then
               pointsDisplayMD:setFillColor(1,0,0)
+              combo = 0
               timer.performWithDelay( 500, removePointsAndTarget )
               -- targetDisplay.value = math.math.random(1, 500)
               -- targetDisplay.text = "/" .. targetDisplay.value
@@ -430,13 +507,34 @@ function scene:show( event )
 
         end
 
+        function addListners()
+          md1:addEventListener("touch", dragObject)
+          md10:addEventListener("touch", dragObject)
+          md100:addEventListener("touch", dragObject)
+        end
 
+        function moveHand()
+        transition.moveTo(hand, { x = display.contentCenterX +24, y = display.contentHeight - 150, time = 700, onComplete = fadeOutHand})
+        end
 
-        md1:addEventListener("touch", dragObject)
-        md10:addEventListener("touch", dragObject)
-        md100:addEventListener("touch", dragObject)
+        function fadeOutHand()
+          transition.fadeOut(hand, {time = 300, onComplete = addListners})
+        end
+
+        if rightCounter == 0 then
+          print("rightCounter = " .. rightCounter)
+          hand = display.newImageRect("handAndMd10.png", 81,81)
+          hand.x = display.contentCenterX +24
+          hand.y = display.contentHeight - 56
+          hand.alpha = 0
+          self.view:insert(hand)
+          transition.fadeIn(hand, {time = 300, onComplete = moveHand})
         -- ship:addEventListener("collision", feedShip)
         -- ship:addEventListener("touch", feedShip)
+        else
+          print("rightCounter = " .. rightCounter)
+          addListners()
+        end
 
     elseif ( phase == "did" ) then
         -- Code here runs when the scene is entirely on screen
