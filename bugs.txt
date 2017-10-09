@@ -3,6 +3,7 @@ Bugs:
   1- goldenMat.lua:
 
     1.1- A quantidade de imagens não está sendo reiniciada ao errar, fazendo com que a contagem continue;
+    1.2- Ao acertar, é exibido um novo número alvo e este é alterado ao iniciar o próximo estágio;
 
   2- quiz.lua:
 

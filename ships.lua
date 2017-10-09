@@ -80,6 +80,22 @@ function scene:show( event )
         background.x = display.contentCenterX
         background.y = display.contentCenterY
 
+        litleStars = {}
+
+        function drawLitleStars()
+          for i=1,starAmount do
+            litleStar = display.newImageRect("litleStar.png",10, 10)
+            -- print("litleStar = "..litleStar)
+            self.view:insert(litleStar)
+            litleStar.x = math.random(5,display.contentWidth - 5)
+            litleStar.y = math.random(5,display.contentHeight - 5)
+            transition.blink(litleStar, {time=1500})
+            litleStars[i] = litleStar
+          end
+        end
+
+        drawLitleStars()
+
         starPoints = display.newImageRect("star1.png", 25, 25)
         starPoints.x = display.contentWidth - 20
         starPoints.y = display.contentHeight - 40

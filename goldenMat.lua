@@ -22,10 +22,10 @@ end
 
 function restartLevel()
   rightCounter = rightCounter + 1
-  if rightCounter < 9 then
+  if rightCounter < 6 then
     options = { params={counter = rightCounter, combo0 = combo, starAmount0 = starAmount} }
     composer.gotoScene('goldenMat', options)
-  elseif rightCounter >= 9 then
+  elseif rightCounter >= 6 then
     goToQuiz()
   end
 
@@ -177,6 +177,22 @@ function scene:show( event )
           invisibleMenuButton.x = display.contentWidth - 30
           self.view:insert(invisibleMenuButton)
           invisibleMenuButton:addEventListener("touch", returnToMenu)
+
+          litleStars = {}
+
+          function drawLitleStars()
+            for i=1,starAmount do
+              litleStar = display.newImageRect("litleStar.png",10, 10)
+              -- print("litleStar = "..litleStar)
+              self.view:insert(litleStar)
+              litleStar.x = math.random(5,display.contentWidth - 5)
+              litleStar.y = math.random(5,display.contentHeight - 5)
+              transition.blink(litleStar, {time=1500})
+              litleStars[i] = litleStar
+            end
+          end
+
+          drawLitleStars()
 
           function removePointsAndTarget()
             if pointsDisplayMD then
@@ -499,7 +515,7 @@ function scene:show( event )
               -- end
               print("drawstars")
               drawStars()
-              timer.performWithDelay( 1000, removePointsAndTarget )
+              -- timer.performWithDelay( 1000, removePointsAndTarget )
               timer.performWithDelay( 2000, restartLevel )
             end
 
