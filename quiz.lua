@@ -437,7 +437,7 @@ function scene:show( event )
 
           dEquals = display.newText({
               text = operation,
-              x = display.contentCenterX *1.4 ,
+              x = display.contentCenterX *1.4 + 20 ,
               y = display.contentCenterY,
               -- width = 128,
               font = native.systemFont,
