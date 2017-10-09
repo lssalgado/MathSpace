@@ -475,6 +475,12 @@ function scene:show( event )
           end
         end
 
+        function resetImages()
+          dezenasVisiveis = 0
+          unidadesVisiveis = 0
+          timer.performWithDelay( 700, removePointsAndTarget )
+        end
+
         function feedShip(amount)
 
             if amount == 1 then
@@ -500,7 +506,8 @@ function scene:show( event )
             if tonumber( pointsDisplayMD.text) > tonumber( targetDisplay.value) then
               pointsDisplayMD:setFillColor(1,0,0)
               combo = 0
-              timer.performWithDelay( 500, removePointsAndTarget )
+
+              resetImages()
               -- targetDisplay.value = math.math.random(1, 500)
               -- targetDisplay.text = "/" .. targetDisplay.value
             end

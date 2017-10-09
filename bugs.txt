@@ -1,0 +1,11 @@
+Bugs:
+
+  1- goldenMat.lua:
+
+    1.1- A quantidade de imagens não está sendo reiniciada ao errar, fazendo com que a contagem continue;
+
+  2- quiz.lua:
+
+    2.1- A equação está sendo escrita por cima das imagens;
+
+  3- ships.lua:
