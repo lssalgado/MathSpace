@@ -75,7 +75,11 @@ function scene:show( event )
         litleStars = {}
 
         function drawLitleStars()
-          for i=1,starAmount do
+          starsToDisplay = starAmount
+          if starAmount >= 50 then
+            starsToDisplay = 50
+          end
+          for i=1,starsToDisplay do
             litleStar = display.newImageRect("litleStar.png",10, 10)
             -- print("litleStar = "..litleStar)
             self.view:insert(litleStar)
