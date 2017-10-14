@@ -6,31 +6,22 @@ local scene = composer.newScene()
 -- Code outside of the scene event functions below will only be executed ONCE unless
 -- the scene is removed entirely (not recycled) via "composer.removeScene()"
 -- -----------------------------------------------------------------------------------
-
-function goToGoldenMat(event)
-    if event.phase == 'began' then
-        print('hide')
-        options = { params={ counter=0, combo0=0, starAmount0= 0  } }
-        composer.gotoScene('goldenMat', options)
-
-    end
+difficulty = 0
+starAmount = 0
+function restartShips()
+  print("difficulty0 = " .. difficulty)
+  print("starAmount0 = " .. starAmount)
+  options = {params={ difficulty0 = difficulty, starAmount0= starAmount }}
+  composer.removeScene( 'ships', true )
+  composer.gotoScene( 'ships' , options )
 end
 
-function goToQuiz(event)
-    if event.phase == 'began' then
-      options = {params={rightCounter = 0, wrongCounter = 0, difficulty = 0, combo0=0, starAmount0= 0 }}
-      composer.gotoScene( 'quiz' , options )
-    end
+function restartAll()
+  composer.removeScene('menu', true)
+  composer.removeScene('goldenMat', true)
+  composer.gotoScene('menu')
 end
 
-function goToShips(event)
-    if event.phase == 'began' then
-      options = {params={ difficulty0 = 1, starAmount0= 100 }}
-      composer.gotoScene( 'ships' , options )
-    end
-end
-
- local name = 'Espaço Matemático'
 
 -- -----------------------------------------------------------------------------------
 -- Scene event functions
@@ -40,6 +31,7 @@ end
 function scene:create( event )
 
     local sceneGroup = self.view
+    -- Code here runs when the scene is first created but has not yet appeared on screen
 
 end
 
@@ -52,31 +44,10 @@ function scene:show( event )
 
     if ( phase == "will" ) then
         -- Code here runs when the scene is still off screen (but is about to come on screen)
-        composer.removeScene('ships')
-        -- gameName = display.newText({
-        --     text = name,
-        --     x = display.contentCenterX,
-        --     y = 50,
-        --     -- width = 128,
-        --     font = native.systemFont,
-        --     fontSize = 48,
-        --     align = "right"})
-        background = display.newImageRect("BG.png", display.contentWidth, display.contentHeight - 45)
-        background.x = display.contentCenterX
-        background.y = display.contentCenterY
-        -- sceneGroup:insert(gameName)
-        sceneGroup:insert(background)
+
     elseif ( phase == "did" ) then
         -- Code here runs when the scene is entirely on screen
-
-
-        -- gameName:addEventListener('touch', goToGoldenMat)
-
-        -- background:addEventListener('touch', goToGoldenMat)
-        background:addEventListener('touch', goToQuiz)
-        -- background:addEventListener('touch', goToShips)
-
-
+        restartAll()
     end
 end
 
@@ -104,7 +75,6 @@ function scene:destroy( event )
     -- Code here runs prior to the removal of scene's view
 
 end
-
 
 
 -- -----------------------------------------------------------------------------------

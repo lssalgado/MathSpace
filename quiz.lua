@@ -36,6 +36,27 @@ function restartLevel()
 
 end
 
+function goToMenu(event)
+    print('return to menu')
+    if event.phase == 'began' then
+        -- for k,v in pairs(ship) do
+        --     v:setLinearVelocity(0,0)
+        -- end
+        -- composer.removeScene('ships', true)
+        -- composer.gotoScene('menu')
+        local options = {
+            effect = "fade",
+            time = 500,
+            isModal = true,
+            params = {previous = 'goldenMat'}
+        }
+        -- composer.gotoScene( "menu", options )
+        composer.gotoScene( 'blankScene2')
+    end
+end
+
+pause = 0
+
 
 -- -----------------------------------------------------------------------------------
 -- Scene event functions
@@ -607,6 +628,49 @@ function scene:show( event )
             timer.performWithDelay( 500, restartLevel)
           end
         end
+
+        local invisibleMenuButton = display.newImageRect("Settings-Button-2400px.png", 50, 50)
+        invisibleMenuButton.y = 55
+        invisibleMenuButton.x = display.contentWidth - 30
+        self.view:insert(invisibleMenuButton)
+
+        imageToMenu = display.newRect(display.contentCenterX, display.contentCenterY, 240, 30)
+        imageToMenu:setFillColor(0,0,0)
+        imageToMenu.isVisible = false
+        self.view:insert(imageToMenu)
+
+        textToMenu = display.newText({
+            text = "Voltar Ao Menu Inicial",
+            x = display.contentCenterX,
+            y = display.contentCenterY,
+            font = native.systemFont,
+            fontSize = 24,
+            align = "center"})
+        textToMenu:setFillColor(1,1,1)
+        textToMenu.isVisible = false
+        self.view:insert(textToMenu)
+
+        function returnToMenu(event)
+            if event.phase == 'began' then
+              if pause == 0 then
+                pause = 1
+                physics.pause()
+                imageToMenu.isVisible = true
+                textToMenu.isVisible = true
+                imageToMenu:addEventListener("touch", goToMenu)
+
+              else
+                pause = 0
+                physics.start()
+                imageToMenu.isVisible = false
+                textToMenu.isVisible = false
+                imageToMenu:removeEventListener("touch", goToMenu)
+
+              end
+            end
+        end
+
+        invisibleMenuButton:addEventListener("touch", returnToMenu)
 
         rightButton:addEventListener("touch", checkRight)
         wrongButton:addEventListener("touch", checkWrong)

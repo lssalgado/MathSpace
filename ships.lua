@@ -23,22 +23,13 @@ function restartLevel()
   composer.gotoScene( 'blankScene' , options )
 end
 
-function returnToMenu(event)
-    print('return to menu')
-    if event.phase == 'began' then
-        -- for k,v in pairs(ship) do
-        --     v:setLinearVelocity(0,0)
-        -- end
-        -- composer.removeScene('ships', true)
-        -- composer.gotoScene('menu')
-        local options = {
-            effect = "fade",
-            time = 500,
-            isModal = true
-        }
-        composer.gotoScene( "menu", options )
-    end
+function goToMenu()
+    composer.gotoScene('blankScene2')
 end
+
+pause = 0
+
+
 
 -- -----------------------------------------------------------------------------------
 -- Scene event functions
@@ -663,6 +654,7 @@ function scene:show( event )
 
         function createProjectile(event)
             if event.phase == 'began' then
+                if event.x < display.contentWidth-55 or event.y > display.contentHeight-55 then
                   local laserChannel = audio.stop( laserSound )
                   print(event.y)
                   projectile = display.newRect(playerShip.x, display.contentHeight-65, 5,5)
@@ -672,11 +664,52 @@ function scene:show( event )
                   projectile:applyLinearImpulse(0, -0.005, projectile.x, projectile.y)
                   projectile:addEventListener("collision", shipHit)
                   local laserChannel = audio.play( laserSound )
+                end
             end
         end
 
         -- usar para não ter aceleração contínua
         playerShip.direction = ''
+
+        imageToMenu = display.newRect(display.contentCenterX, display.contentCenterY, 240, 30)
+        imageToMenu:setFillColor(0,0,0)
+        imageToMenu.isVisible = false
+        self.view:insert(imageToMenu)
+
+        textToMenu = display.newText({
+            text = "Voltar Ao Menu Inicial",
+            x = display.contentCenterX,
+            y = display.contentCenterY,
+            font = native.systemFont,
+            fontSize = 24,
+            align = "center"})
+        textToMenu:setFillColor(1,1,1)
+        textToMenu.isVisible = false
+        self.view:insert(textToMenu)
+
+        function returnToMenu(event)
+            if event.phase == 'began' then
+              if pause == 0 then
+                pause = 1
+                physics.pause()
+                imageToMenu.isVisible = true
+                textToMenu.isVisible = true
+                imageToMenu:addEventListener("touch", goToMenu)
+                invisibleFireButton:removeEventListener("touch", createProjectile)
+                invisibleFireButton2:removeEventListener("touch", createProjectile)
+                directionalArrow:removeEventListener("touch", moveDirectional)
+              else
+                pause = 0
+                physics.start()
+                imageToMenu.isVisible = false
+                textToMenu.isVisible = false
+                imageToMenu:removeEventListener("touch", goToMenu)
+                invisibleFireButton:addEventListener("touch", createProjectile)
+                invisibleFireButton2:addEventListener("touch", createProjectile)
+                directionalArrow:addEventListener("touch", moveDirectional)
+              end
+            end
+        end
 
         function moveDirectional( event )
             if event.phase == 'began' then
@@ -727,14 +760,10 @@ function scene:show( event )
 
         invisibleFireButton:addEventListener("touch", createProjectile)
         invisibleFireButton2:addEventListener("touch", createProjectile)
+        directionalArrow:addEventListener("touch", moveDirectional)
         leftWall:addEventListener("collision", invertLinearVelocity)
         rightWall:addEventListener("collision", invertLinearVelocity)
-        -- invisibleLeftButton:addEventListener("touch", movePlayerShip)
-        -- invisibleRightButton:addEventListener("touch", movePlayerShip)
-        -- invisibleLeftButton:addEventListener("touch", moveDirectional)
-        -- invisibleRightButton:addEventListener("touch", moveDirectional)
         invisibleMenuButton:addEventListener("touch", returnToMenu)
-        directionalArrow:addEventListener("touch", moveDirectional)
 
     elseif ( phase == "did" ) then
         -- Code here runs when the scene is entirely on screen

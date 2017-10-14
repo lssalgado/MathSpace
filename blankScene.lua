@@ -16,6 +16,12 @@ function restartShips()
   composer.gotoScene( 'ships' , options )
 end
 
+function restartAll()
+  composer.removeScene('menu', true)
+  composer.removeScene('goldenMat', true)
+  composer.gotoScene('menu')
+end
+
 
 -- -----------------------------------------------------------------------------------
 -- Scene event functions
