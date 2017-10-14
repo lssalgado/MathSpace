@@ -72,8 +72,8 @@ function scene:show( event )
 
         -- gameName:addEventListener('touch', goToGoldenMat)
 
-        -- background:addEventListener('touch', goToGoldenMat)
-        background:addEventListener('touch', goToQuiz)
+        background:addEventListener('touch', goToGoldenMat)
+        -- background:addEventListener('touch', goToQuiz)
         -- background:addEventListener('touch', goToShips)
 
 

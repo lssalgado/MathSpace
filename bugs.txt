@@ -10,3 +10,6 @@ Bugs:
     2.1- A equação está sendo escrita por cima das imagens;
 
   3- ships.lua:
+
+  4- tudo:
+    4.1- Voltar para o menu esta com alguns problemas de assincronidade :c
