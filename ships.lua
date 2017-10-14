@@ -75,6 +75,10 @@ function scene:show( event )
         local points = 36
         local actualOperation = 'plus'
 
+        local laserSound = audio.loadSound( "laser.wav" )
+        local correctSound = audio.loadSound( "correct.mp3" )
+        local wrongSound = audio.loadSound( "wrong.wav" )
+
         local background = display.newImageRect("background.png",display.contentWidth,display.contentHeight)
         self.view:insert(background)
         background.x = display.contentCenterX
@@ -612,17 +616,23 @@ function scene:show( event )
                 if event.other.last == true then
                     print('collision')
                     if(event.other.text == targetValue) then
+                        local correctChannel = audio.stop( correctSound )
+                        local wrongChannel = audio.stop( wrongSound )
                         directionalArrow:setFillColor(0,1,0)
                         playerPontuation.text = playerPontuation.text + 100
                         print(event.other.text .. " CERTOU " .. targetValue)
                         adjustDifficulty(1)
+                        local correctChannel = audio.play( correctSound )
                     else
+                        local correctChannel = audio.stop( correctSound )
+                        local wrongChannel = audio.stop( wrongSound )
                         directionalArrow:setFillColor(1,0,0)
                         if tonumber(playerPontuation.text) >= 100 then
                           playerPontuation.text = playerPontuation.text - 100
                         end
                         print(event.other.text   .. " EROU " .. targetValue)
                         adjustDifficulty(0)
+                        local wrongChannel = audio.play( wrongSound )
                     end
                     operation(event.other)
                     event.other:removeSelf()
@@ -653,6 +663,7 @@ function scene:show( event )
 
         function createProjectile(event)
             if event.phase == 'began' then
+                  local laserChannel = audio.stop( laserSound )
                   print(event.y)
                   projectile = display.newRect(playerShip.x, display.contentHeight-65, 5,5)
                   self.view:insert(projectile)
@@ -660,6 +671,7 @@ function scene:show( event )
                   projectile.gravityScale = 0
                   projectile:applyLinearImpulse(0, -0.005, projectile.x, projectile.y)
                   projectile:addEventListener("collision", shipHit)
+                  local laserChannel = audio.play( laserSound )
             end
         end
 

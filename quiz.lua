@@ -65,8 +65,14 @@ function scene:show( event )
         starAmount = event.params.starAmount0
         controller = 0
 
+         correctSound = audio.loadSound( "correct.mp3" )
+         wrongSound = audio.loadSound( "wrong.wav" )
+
     elseif ( phase == "did" ) then
         -- Code here runs when the scene is entirely on screen
+
+
+
         background = display.newImageRect("lab.jpg",display.contentWidth,display.contentHeight)
         self.view:insert(background)
         background.x = display.contentCenterX
@@ -552,6 +558,8 @@ function scene:show( event )
           -- elseif event.phase == "ended" or event.phase == "canceled" then
             print("ENTROOOOYU")
             if isRight == 1 and controller == 0 then
+               correctChannel = audio.stop( correctSound )
+               correctChannel = audio.play( correctSound )
               controller = 1
               rightButton:removeEventListener("tap",checkRight)
               wrongButton:removeEventListener("tap",checkWrong)
@@ -562,6 +570,8 @@ function scene:show( event )
               return
             elseif controller == 0 then
               controller = 1
+              local wrongChannel = audio.stop( wrongSound )
+              local wrongChannel = audio.play( wrongSound )
               rightButton:removeEventListener("tap",checkRight)
               wrongButton:removeEventListener("tap",checkWrong)
               displayResultFalse()
@@ -576,6 +586,8 @@ function scene:show( event )
 
         function checkWrong()
           if isRight == 0 and controller == 0 then
+             correctChannel = audio.stop( correctSound )
+             correctChannel = audio.play( correctSound )
             controller = 1
             rightButton:removeEventListener("tap",checkRight)
             wrongButton:removeEventListener("tap",checkWrong)
@@ -584,6 +596,8 @@ function scene:show( event )
             drawStars()
             timer.performWithDelay( 2000, restartLevel)
           elseif controller == 0 then
+            local wrongChannel = audio.stop( wrongSound )
+            local wrongChannel = audio.play( wrongSound )
             controller = 1
             rightButton:removeEventListener("tap",checkRight)
             wrongButton:removeEventListener("tap",checkWrong)

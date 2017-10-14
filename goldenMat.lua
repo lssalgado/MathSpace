@@ -75,6 +75,10 @@ function scene:show( event )
         starAmount = event.params.starAmount0
         function loadImages()
           physics.stop()
+
+          correctSound = audio.loadSound( "correct.mp3" )
+          wrongSound = audio.loadSound( "wrong.wav" )
+
           local background = display.newImageRect("lab.jpg",display.contentWidth,display.contentHeight)
           self.view:insert(background)
           background.x = display.contentCenterX
@@ -513,6 +517,8 @@ function scene:show( event )
             enlargeShip()
             pointsDisplayMD.text = tonumber(pointsDisplayMD.text)+amount
             if tonumber( pointsDisplayMD.text) == tonumber( targetDisplay.value) then
+              local correctChannel = audio.stop( correctSound )
+              local correctChannel = audio.play( correctSound )
               pointsDisplayMD:setFillColor(0,1,0)
               -- if event.params.counter == 2 then
               --   shipFilter3:removeSelf()
@@ -524,6 +530,10 @@ function scene:show( event )
             end
 
             if tonumber( pointsDisplayMD.text) > tonumber( targetDisplay.value) then
+
+              local correctChannel = audio.stop( wrongSound )
+              local wrongChannel = audio.play( wrongSound )
+
               pointsDisplayMD:setFillColor(1,0,0)
               combo = 0
 
