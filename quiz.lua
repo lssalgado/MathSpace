@@ -16,7 +16,7 @@ function restartLevel()
     print('actualRightCounter is now ' .. counter)
     print('difficulty was '.. actualDifficulty .. ' and now is ' .. math.ceil(counter/3))
     if counter < 12 then
-      options = { params={rightCounter = counter, wrongCounter = actualWrongCounter, difficulty = math.ceil(counter/4), combo0=combo, starAmount0= starAmount} }
+      options = { params={rightCounter = counter, wrongCounter = actualWrongCounter, difficulty = math.ceil(counter/3), combo0=combo, starAmount0= starAmount} }
       composer.gotoScene('quiz', options)
     elseif counter >= 12 then
       -- go to goldenMat
@@ -30,7 +30,7 @@ function restartLevel()
     end
   else
     counter = actualRightCounter
-    options = { params={rightCounter = actualRightCounter, wrongCounter = actualWrongCounter, difficulty = math.ceil(counter/4), combo0=combo, starAmount0= starAmount} }
+    options = { params={rightCounter = actualRightCounter, wrongCounter = actualWrongCounter, difficulty = math.ceil(counter/3), combo0=combo, starAmount0= starAmount} }
     composer.gotoScene('quiz', options)
   end
 
@@ -301,7 +301,7 @@ function scene:show( event )
                 operation =  '+ ' .. otherNumber .. ' = ' .. result
               end
             else
-              equation = math.random(1, 100)
+              equation = math.random(1, 20)
               answer = equation
               otherNumber = math.random(1, 10)
               if plusOrMinus == 2 then
@@ -319,9 +319,9 @@ function scene:show( event )
         end
 
         function callForEquation(dif)
-          if dif > 1 then
-            dif = dif + 1
-          end
+          -- if dif > 1 then
+          --   dif = dif + 1
+          -- end
           if  dif == 0 then
             print("dif = 0")
             defineEquation0()

@@ -258,9 +258,9 @@ function scene:show( event )
               number4 = math.random( 1,10 )
               operation = math.random(1,4)
             elseif(difficulty == 4) then
-              number1 = math.random( 1,10 )
-              number2 = math.random( 1,100 )
-              number3 = math.random( 1,50 )
+              number1 = math.random( 50,200 )
+              number2 = math.random( 20,100 )
+              number3 = math.random( 10,50 )
               number4 = math.random( 1,10 )
               operation = math.random(1,4)
             end

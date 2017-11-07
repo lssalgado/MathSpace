@@ -165,10 +165,10 @@ function scene:show( event )
             self.view:insert(unidade)
             unidades[i] = unidade
 
-            if i < 10 then
-              cheese = display.newImageRect("cheese.png", 45, 13)
+            if i < 7 then
+              cheese = display.newImageRect("cheese.png", 45, 17)
               cheese.x = display.contentCenterX + 65
-              cheese.y = display.contentCenterY + 64 - (13*i)
+              cheese.y = display.contentCenterY + 64 - (17*i)
               cheese.isVisible = false
               self.view:insert(cheese)
               cheeses[i] = cheese
@@ -258,11 +258,11 @@ function scene:show( event )
           end
 
           function defineValue()
-            if event.params.counter <3 then
+            if event.params.counter <2 then
               value = math.random(10, 19)
-            elseif event.params.counter >= 3 and event.params.counter < 6  then
+            elseif event.params.counter >= 2 and event.params.counter < 4  then
               value = math.random(25, 75)
-            elseif event.params.counter >= 6 then
+            elseif event.params.counter >= 4 then
               value = math.random(100, 159)
             end
             return value
@@ -344,13 +344,13 @@ function scene:show( event )
           for k,v in pairs(event) do
             print (k , v)
           end
-          if event.params.counter >= 3 then
+          if event.params.counter >= 2 then
             shipFilter1:removeSelf()
           end
-          if event.params.counter >= 6 then
+          if event.params.counter >= 4 then
             shipFilter2:removeSelf()
           end
-          if event.params.counter == 9 then
+          if event.params.counter == 6 then
             shipFilter3:removeSelf()
           end
         end
