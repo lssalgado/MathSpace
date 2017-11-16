@@ -1,4 +1,5 @@
 local composer = require( "composer" )
+local statsController = require"statsController"
 
 local scene = composer.newScene()
 
@@ -76,6 +77,22 @@ function scene:show( event )
         rightCounter = event.params.counter
         combo = event.params.combo0
         starAmount = event.params.starAmount0
+        saveData1 = "1 " .. rightCounter .. " " .. combo .. " " .. starAmount
+
+        local path = system.pathForFile( "history.txt", system.CachesDirectory )
+        print('saveData1 = '.. saveData1)
+        file = io.open(path, "w")
+        if file then
+          file:write(saveData1)
+          io.close( file )
+        end
+
+        file = io.open(path, "r")
+        if file then
+          print("Conteudo = ".. file:read("*a"))
+          io.close( file )
+        end
+
         function loadImages()
           physics.stop()
 
@@ -542,6 +559,14 @@ function scene:show( event )
         function resetImages()
           dezenasVisiveis = 0
           unidadesVisiveis = 0
+          if rightCounter < 2 then
+            posicao = 2
+          elseif rightCounter >= 2 and rightCounter < 4 then
+            posicao = 4
+          elseif rightCounter >= 4 then
+            posicao = 6
+          end
+          statsController.addStats(posicao)
           timer.performWithDelay( 700, removePointsAndTarget )
         end
 
@@ -566,6 +591,14 @@ function scene:show( event )
               print("drawstars")
               drawStars()
               -- timer.performWithDelay( 1000, removePointsAndTarget )
+              if rightCounter < 2 then
+                posicao = 1
+              elseif rightCounter >= 2 and rightCounter < 4 then
+                posicao = 3
+              elseif rightCounter > 4 then
+                posicao = 5
+              end
+              statsController.addStats(posicao)
               timer.performWithDelay( 2000, restartLevel )
             end
 

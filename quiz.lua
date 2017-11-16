@@ -1,4 +1,5 @@
 local composer = require( "composer" )
+local statsController = require"statsController"
 
 local scene = composer.newScene()
 
@@ -91,6 +92,21 @@ function scene:show( event )
 
     elseif ( phase == "did" ) then
         -- Code here runs when the scene is entirely on screen
+        saveData1 = "2 " .. actualRightCounter .. " " .. actualWrongCounter .. " " .. actualDifficulty .. " " .. combo .. " " .. starAmount
+
+        local path = system.pathForFile( "history.txt", system.CachesDirectory )
+        print('saveData1 = '.. saveData1)
+        file = io.open(path, "w")
+        if file then
+          file:write(saveData1)
+          io.close( file )
+        end
+
+        file = io.open(path, "r")
+        if file then
+          print("Conteudo = ".. file:read("*a"))
+          io.close( file )
+        end
 
 
 
@@ -573,6 +589,37 @@ function scene:show( event )
           end
         end
 
+        function addError()
+          if  actualDifficulty == 0 then
+            position = 8
+          elseif actualDifficulty == 1 then
+            position = 10
+          elseif actualDifficulty == 2 then
+            position = 12
+          elseif actualDifficulty == 3 then
+            position = 14
+          elseif actualDifficulty == 4 then
+            position = 16
+          end
+          statsController.addStats(position)
+        end
+
+        function addSucess()
+          print('actualDifficulty =================== ' .. actualDifficulty)
+          if  actualDifficulty == 0 then
+            position = 7
+          elseif actualDifficulty == 1 then
+            position = 9
+          elseif actualDifficulty == 2 then
+            position = 11
+          elseif actualDifficulty == 3 then
+            position = 13
+          elseif actualDifficulty == 4 then
+            position = 15
+          end
+          statsController.addStats(position)
+        end
+
         function checkRight(event)
           -- if event.phase == "began" then
           -- elseif event.phase == "moved" then
@@ -587,6 +634,7 @@ function scene:show( event )
               displayResultCorrect()
               rightOrWrong = true
               drawStars()
+              addSucess()
               timer.performWithDelay( 2000, restartLevel)
               return
             elseif controller == 0 then
@@ -598,6 +646,7 @@ function scene:show( event )
               displayResultFalse()
               rightOrWrong = false
               combo = 0
+              addError()
               timer.performWithDelay( 500, restartLevel)
               return
             end
@@ -615,6 +664,7 @@ function scene:show( event )
             displayResultCorrect()
             rightOrWrong = true
             drawStars()
+            addSucess()
             timer.performWithDelay( 2000, restartLevel)
           elseif controller == 0 then
             local wrongChannel = audio.stop( wrongSound )
@@ -625,6 +675,7 @@ function scene:show( event )
             displayResultFalse()
             rightOrWrong = false
             combo = 0
+            addError()
             timer.performWithDelay( 500, restartLevel)
           end
         end

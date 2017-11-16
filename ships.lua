@@ -1,4 +1,5 @@
 local composer = require( "composer" )
+local statsController = require"statsController"
 
 local scene = composer.newScene()
 
@@ -52,12 +53,29 @@ function scene:show( event )
     if ( phase == "will" ) then
         starAmount = event.params.starAmount0
         -- Code here runs when the scene is still off screen (but is about to come on screen)
+        print(">>>>>>>>>>>>>>>>>> começou ships")
         local physics = require('physics')
         physics.start()
 
         composer.removeHidden()
 
         difficulty = event.params.difficulty0
+
+        saveData1 = "3 " .. difficulty .. " " .. starAmount
+
+        local path = system.pathForFile( "history.txt", system.CachesDirectory )
+        print('saveData1 = '.. saveData1)
+        file = io.open(path, "w")
+        if file then
+          file:write(saveData1)
+          io.close( file )
+        end
+
+        file = io.open(path, "r")
+        if file then
+          print("Conteudo = ".. file:read("*a"))
+          io.close( file )
+        end
 
         targetValue = 0
 
@@ -294,61 +312,65 @@ function scene:show( event )
                   return {equationString, equationResult}
               end
         end
-
+        controller = 0
         function startShipsTest(lines)
-            k = 1
-            for i=1, lines do
-                for j=1, lines do
-                    print(j+i)
-                    -- local shipToInsert = display.newRect(groupShips.x + 35*j, 30*i, 25, 25)
-                    shipEquation = defineEquation(difficulty)
-                    print("shipeq = "..table.concat( shipEquation, ", " ))
-                    local shipToInsert = display.newImageRect("enemyShip.png", 25, 25)
+          print(">>>>>>>>>>>>>>>>>>>> controller = " .. controller)
+          if controller == 0 then
+            print(">>>>>>>>>>>>>>> desenha ships")
+              k = 1
+              for i=1, lines do
+                  for j=1, lines do
+                      -- print(j+i)
+                      -- local shipToInsert = display.newRect(groupShips.x + 35*j, 30*i, 25, 25)
+                      shipEquation = defineEquation(difficulty)
+                      -- print("shipeq = "..table.concat( shipEquation, ", " ))
+                      local shipToInsert = display.newImageRect("enemyShip.png", 25, 25)
 
-                    shipToInsert.text = shipEquation[2]
-                    shipToInsert.x = groupShips.x + 55*j
-                    shipToInsert.y = ((30*i)+55)
-                    shipToInsert.width = 45
-                    shipToInsert.height = 30
-                    shipToInsert.font = native.systemFont
-                    shipToInsert.fontSize = 12
-                    shipToInsert.align = "center"
+                      shipToInsert.text = shipEquation[2]
+                      shipToInsert.x = groupShips.x + 55*j
+                      shipToInsert.y = ((30*i)+55)
+                      shipToInsert.width = 45
+                      shipToInsert.height = 30
+                      shipToInsert.font = native.systemFont
+                      shipToInsert.fontSize = 12
+                      shipToInsert.align = "center"
 
-                    shipToInsert.visibleText = display.newText({
-                        text = shipEquation[2],
-                        x = shipToInsert.x,
-                        y = shipToInsert.y+30,
-                        width = 45,
-                        height = 30,
-                        font = native.systemFont,
-                        fontSize = 12,
-                        align = "center"})
-                    shipToInsert.visibleText:setFillColor(0.16, 0.16,0.16)
-                    self.view:insert(shipToInsert.visibleText)
-                    -- local shipToInsert = display.newText({
-                    --     text = shipEquation[2],
-                    --     x = groupShips.x + 35*j,
-                    --     y = ((30*i)+25),
-                    --     width = 25,
-                    --     height = 25,
-                    --     font = native.systemFont,
-                    --     fontSize = 12,
-                    --     align = "center"})
-                    -- shipToInsert:setFillColor(0.16, 0.16,0.16)
-                    if i == lines then
-                        shipToInsert.last = true
+                      shipToInsert.visibleText = display.newText({
+                          text = shipEquation[2],
+                          x = shipToInsert.x,
+                          y = shipToInsert.y+30,
+                          width = 45,
+                          height = 30,
+                          font = native.systemFont,
+                          fontSize = 12,
+                          align = "center"})
+                      shipToInsert.visibleText:setFillColor(0.16, 0.16,0.16)
+                      self.view:insert(shipToInsert.visibleText)
+                      -- local shipToInsert = display.newText({
+                      --     text = shipEquation[2],
+                      --     x = groupShips.x + 35*j,
+                      --     y = ((30*i)+25),
+                      --     width = 25,
+                      --     height = 25,
+                      --     font = native.systemFont,
+                      --     fontSize = 12,
+                      --     align = "center"})
+                      -- shipToInsert:setFillColor(0.16, 0.16,0.16)
+                      if i == lines then
+                          shipToInsert.last = true
 
-                    else
-                        shipToInsert.last = false
-                        shipToInsert.visibleText.isVisible = false
-                    end
-                    shipToInsert.position = k
-                    shipToInsert.points = shipEquation[2]
-                    shipToInsert.equationToShow = shipEquation[1]
-                    table.insert(ship,shipToInsert)
-                    k = k + 1
-                    self.view:insert(shipToInsert)
-                end
+                      else
+                          shipToInsert.last = false
+                          shipToInsert.visibleText.isVisible = false
+                      end
+                      shipToInsert.position = k
+                      shipToInsert.points = shipEquation[2]
+                      shipToInsert.equationToShow = shipEquation[1]
+                      table.insert(ship,shipToInsert)
+                      k = k + 1
+                      self.view:insert(shipToInsert)
+                  end
+              end
             end
         end
 
@@ -369,13 +391,13 @@ function scene:show( event )
         end
 
         for k,v in pairs(ship) do
-            print(k, v)
+            -- print(k, v)
             v.name = 'ship'
             for index, data in ipairs(ship) do
-              print(index)
+              -- print(index)
 
               for key, value in pairs(data) do
-                print('\t', key, value)
+                -- print('\t', key, value)
               end
             end
             sceneGroup:insert(v)
@@ -591,15 +613,15 @@ function scene:show( event )
         end
 
         function adjustDifficulty(value)
-            if (value == 1) then
-                if (difficulty < 4) then
-                    difficulty = difficulty + 1
-                end
-            elseif (value == 0) then
-                if (difficulty > 0) then
-                    difficulty = difficulty - 1
-                end
-            end
+            -- if (value == 1) then
+            --     if (difficulty < 4) then
+            --         difficulty = difficulty + 1
+            --     end
+            -- elseif (value == 0) then
+            --     if (difficulty > 0) then
+            --         difficulty = difficulty - 1
+            --     end
+            -- end
         end
 
         function shipHit(event)
