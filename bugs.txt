@@ -13,3 +13,4 @@ Bugs:
 
   4- tudo:
     4.1- Voltar para o menu esta com alguns problemas de assincronidade :c
+s
