@@ -8,6 +8,7 @@ local scene = composer.newScene()
 -- -----------------------------------------------------------------------------------
 difficulty = 0
 starAmount = 0
+controller = 0
 function restartShips()
   print("difficulty0 = " .. difficulty)
   print("starAmount0 = " .. starAmount)
@@ -17,9 +18,13 @@ function restartShips()
 end
 
 function restartAll()
-  composer.removeScene('menu', true)
-  composer.removeScene('goldenMat', true)
-  composer.gotoScene('menu')
+  if controller == 0 then
+    controller = 1
+    composer.removeScene('menu', true)
+    composer.removeScene('goldenMat', true)
+    composer.removeScene( 'menu' )
+    composer.gotoScene('menu')
+  end
 end
 
 

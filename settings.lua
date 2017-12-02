@@ -10,8 +10,14 @@ local scene = composer.newScene()
 
 function goToMenu(event)
   if event.phase == 'began' then
-      composer.removeScene( 'ships' )
-      composer.gotoScene('menu')
+      print("####################### MANDANDO PARA MENU")
+      -- composer.removeScene( 'ships' )
+      local options = {
+                  effect = "fade",
+                  time = 500,
+                  isModal = true}
+      composer.removeScene( 'menu')
+      composer.gotoScene('menu', options )
   end
 end
 

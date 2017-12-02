@@ -29,7 +29,10 @@ function resetAllStats()
     print( "File error: " .. errorString )
   else
     print("RESETING ALL STATS")
-    file:write('0 0 0 0')
+    file:write('0 0 0 0') -- USAR PARA FUNCIONAR NORMALMENTE
+    -- file:write('1 1 1 1') -- USAR PARA IR DIRETO PARA O MODO 1
+    -- file:write('2 1 1 1 1 1') -- USAR PARA IR DIRETO PARA O MODO 2
+    -- file:write('3 1 1') -- USAR PARA IR DIRETO PARA O MODO 3
     io.close( file )
   end
 end

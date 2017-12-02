@@ -8,6 +8,7 @@ local scene = composer.newScene()
 -- -----------------------------------------------------------------------------------
 difficulty = 0
 starAmount = 0
+controller = 0
 function restartShips()
   print("difficulty0 = " .. difficulty)
   print("starAmount0 = " .. starAmount)
@@ -19,6 +20,7 @@ end
 function restartAll()
   composer.removeScene('menu', true)
   composer.removeScene('goldenMat', true)
+  composer.removeScene( 'menu' )
   composer.gotoScene('menu')
 end
 
@@ -47,7 +49,10 @@ function scene:show( event )
 
     elseif ( phase == "did" ) then
         -- Code here runs when the scene is entirely on screen
-        restartAll()
+        if controller == 0 then
+          controller = 1
+          restartAll()
+        end
     end
 end
 

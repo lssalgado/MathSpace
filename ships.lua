@@ -24,8 +24,15 @@ function restartLevel()
   composer.gotoScene( 'blankScene' , options )
 end
 
-function goToMenu()
-    composer.gotoScene('blankScene2')
+-- function goToMenu()
+--     composer.gotoScene('blankScene2')
+-- end
+
+function goToMenu(event)
+  if event.phase == "began" then
+    composer.removeScene('menu')
+    composer.gotoScene('menu')
+  end
 end
 
 pause = 0

@@ -32,23 +32,36 @@ function restartLevel()
 
 end
 
+-- function goToMenu(event)
+--     print('return to menu')
+--     if event.phase == 'began' then
+--         -- for k,v in pairs(ship) do
+--         --     v:setLinearVelocity(0,0)
+--         -- end
+--         -- composer.removeScene('ships', true)
+--         -- composer.gotoScene('menu')
+--         local options = {
+--             effect = "fade",
+--             time = 500,
+--             isModal = true,
+--             params = {previous = 'goldenMat'}
+--         }
+--         -- composer.gotoScene( "menu", options )
+--         composer.removeScene( 'menu' )
+--         composer.removeScene( 'blankScene2' )
+--         composer.gotoScene( 'blankScene2')
+--     end
+-- end
+
+-- function goToMenu()
+--     composer.gotoScene('blankScene2')
+-- end
+
 function goToMenu(event)
-    print('return to menu')
-    if event.phase == 'began' then
-        -- for k,v in pairs(ship) do
-        --     v:setLinearVelocity(0,0)
-        -- end
-        -- composer.removeScene('ships', true)
-        -- composer.gotoScene('menu')
-        local options = {
-            effect = "fade",
-            time = 500,
-            isModal = true,
-            params = {previous = 'goldenMat'}
-        }
-        -- composer.gotoScene( "menu", options )
-        composer.gotoScene( 'blankScene2')
-    end
+  if event.phase == "began" then
+    composer.removeScene('menu')
+    composer.gotoScene('menu')
+  end
 end
 
 pause = 0

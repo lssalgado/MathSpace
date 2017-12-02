@@ -39,6 +39,10 @@ end
 
 function goTo(event)
   if event.phase == 'began' then
+    print("####################### Entrou no GoTO")
+    composer.removeScene('goldenMat')
+    composer.removeScene('quiz')
+    composer.removeScene('ships')
     print("saveData[1] = ".. saveData[1])
     if tonumber(saveData[1]) == 3 then
       options = {params={ difficulty0 = tonumber(saveData[2]), starAmount0= tonumber(saveData[3]) }}
@@ -95,6 +99,7 @@ function scene:show( event )
         continueButton = display.newRect(display.contentCenterX, display.contentCenterY + 60, display.contentWidth, display.contentHeight -50)
         -- continueButton.isVisible = false
         self.view:insert(continueButton)
+        print ("criou continuebutton")
 
         background = display.newImageRect("BG.png", display.contentWidth, display.contentHeight - 45)
         background.x = display.contentCenterX
@@ -125,14 +130,17 @@ function scene:show( event )
           io.close( file )
         end
 
+        continueButton:addEventListener('touch', goTo)
+        invisibleMenuButton:addEventListener('touch', goToSettings)
+
     elseif ( phase == "did" ) then
         -- Code here runs when the scene is entirely on screen
 
 
         -- gameName:addEventListener('touch', goToGoldenMat)
 
-        continueButton:addEventListener('touch', goTo)
-        invisibleMenuButton:addEventListener('touch', goToSettings)
+        -- continueButton:addEventListener('touch', goTo)
+        -- invisibleMenuButton:addEventListener('touch', goToSettings)
         -- background:addEventListener('touch', goToQuiz)
         -- background:addEventListener('touch', goToShips)
 
