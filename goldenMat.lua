@@ -302,28 +302,42 @@ function scene:show( event )
             -- removePointsAndTarget()
             pointsDisplayMD = display.newText({
                 text = 0,
-                x = display.contentCenterX-45,
-                y = 50,
+                x = display.contentCenterX + 60,
+                y = 75,
                 -- width = 128,
                 font = native.systemFont,
-                fontSize = 48,
+                fontSize = 30,
+                align = "center"})
+            self.view:insert(pointsDisplayMD)
+            pointsDisplayMD:setFillColor(0,0,0)
+
+            textoAtual = display.newText({
+                text = "Atual: ",
+                x = display.contentCenterX,
+                y = 75,
+                -- width = 128,
+                font = native.systemFont,
+                fontSize = 30,
                 align = "right"})
             self.view:insert(pointsDisplayMD)
+            textoAtual:setFillColor(0,0,0)
 
 
             targetDisplay = display.newText({
                 text = "",
-                x = display.contentCenterX+45,
+                x = display.contentCenterX,
                 y = 50,
                 -- width = 128,
                 font = native.systemFont,
-                fontSize = 48,
+                fontSize = 30,
                 align = "right"})
+
+              targetDisplay:setFillColor(0,0,0)
 
             math.randomseed( os.time() )
             targetDisplay.value = defineValue()
             -- targetDisplay.value = 100
-            targetDisplay.text = "/".. targetDisplay.value
+            targetDisplay.text = "Objetivo: ".. targetDisplay.value
             self.view:insert(targetDisplay)
           end
 
@@ -337,12 +351,12 @@ function scene:show( event )
 
           md1 = display.newImageRect("md1.png", 51, 51)
           self.view:insert(md1)
-          md1.x = display.contentCenterX - 100
+          md1.x = display.contentCenterX + 100
           md1.y = display.contentHeight - 70
           md1.value = 1
           physics.addBody( md1, "dynamic")
           md1.gravityScale = 0
-          md1.originalX = display.contentCenterX - 100
+          md1.originalX = display.contentCenterX + 100
           md1.originalY = display.contentHeight - 70
 
           md10 = display.newImageRect("md10.png", 51, 51)
@@ -357,12 +371,12 @@ function scene:show( event )
 
           md100 = display.newImageRect("md100.png", 51, 51)
           self.view:insert(md100)
-          md100.x = display.contentCenterX + 100
+          md100.x = display.contentCenterX - 100
           md100.y = display.contentHeight - 70
           md100.value = 100
           physics.addBody( md100, "dynamic")
           md100.gravityScale = 0
-          md100.originalX = display.contentCenterX + 100
+          md100.originalX = display.contentCenterX - 100
           md100.originalY = display.contentHeight - 70
 
         end

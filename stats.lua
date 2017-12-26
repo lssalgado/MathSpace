@@ -54,9 +54,9 @@ function scene:show( event )
         invisibleMenuButton.x = 30
         self.view:insert(invisibleMenuButton)
 
-        invisibleResetButton = display.newImageRect("exitX.png", 50, 50)
+        invisibleResetButton = display.newImageRect("exitX.png", 100, 50)
         invisibleResetButton.y = 55
-        invisibleResetButton.x = display.contentWidth - 30
+        invisibleResetButton.x = display.contentWidth - 40
         self.view:insert(invisibleResetButton)
 
         statsData = statsController.parseStats()

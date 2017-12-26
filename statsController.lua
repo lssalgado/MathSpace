@@ -7,8 +7,10 @@ function resetStats()
   local fileStats = io.open(pathStats, "w")
   if fileStats then
     fileStats:write('0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0')
+    -- fileStats:write('1 2 5 3 2 1 2 5 3 2 1 2 5 3 2 4 3 2 3 2 1 3 2 4')
     io.close( fileStats )
     return "0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0"
+    -- return "1 2 5 3 2 1 2 5 3 2 1 2 5 3 2 4 3 2 3 2 1 3 2 4"
   end
 end
 
