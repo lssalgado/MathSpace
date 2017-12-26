@@ -736,10 +736,15 @@ function scene:show( event )
 
         invisibleMenuButton:addEventListener("touch", returnToMenu)
 
-        rightButton:addEventListener("touch", checkRight)
-        wrongButton:addEventListener("touch", checkWrong)
-        rightButton:addEventListener("tap", checkRight)
-        wrongButton:addEventListener("tap", checkWrong)
+        function addListenersFora()
+          rightButton:addEventListener("touch", checkRight)
+          wrongButton:addEventListener("touch", checkWrong)
+          rightButton:addEventListener("tap", checkRight)
+          wrongButton:addEventListener("tap", checkWrong)
+        end
+
+        timer.performWithDelay( 200, addListenersFora)
+
     end
 end
 

@@ -10,6 +10,9 @@ local scene = composer.newScene()
 saveData = {}
 function goToGoldenMat(event)
     if event.phase == 'began' then
+        composer.removeScene('goldenMat')
+        composer.removeScene('quiz')
+        composer.removeScene('ships')
         print('hide')
         options = { params={ counter=0, combo0=0, starAmount0= 0  } }
         composer.gotoScene('goldenMat', options)
@@ -25,17 +28,23 @@ end
 
 function goToQuiz(event)
     if event.phase == 'began' then
+      composer.removeScene('goldenMat')
+      composer.removeScene('quiz')
+      composer.removeScene('ships')
       options = {params={rightCounter = 0, wrongCounter = 0, difficulty = 0, combo0=0, starAmount0= 0 }}
       composer.gotoScene( 'quiz' , options )
     end
 end
 
--- function goToShips(event)
---     if event.phase == 'began' then
---       options = {params={ difficulty0 = 1, starAmount0= 100 }}
---       composer.gotoScene( 'ships' , options )
---     end
--- end
+function goToShips(event)
+    if event.phase == 'began' then
+      composer.removeScene('goldenMat')
+      composer.removeScene('quiz')
+      composer.removeScene('ships')
+      options = {params={ difficulty0 = 1, starAmount0= 0 }}
+      composer.gotoScene( 'ships' , options )
+    end
+end
 
 function goTo(event)
   if event.phase == 'began' then
@@ -96,15 +105,37 @@ function scene:show( event )
         --     font = native.systemFont,
         --     fontSize = 48,
         --     align = "right"})
-        continueButton = display.newRect(display.contentCenterX, display.contentCenterY + 60, display.contentWidth, display.contentHeight -50)
-        -- continueButton.isVisible = false
-        self.view:insert(continueButton)
-        print ("criou continuebutton")
+        -- continueButton = display.newRect(display.contentCenterX, display.contentCenterY + 60, display.contentWidth, display.contentHeight -50)
+        -- -- continueButton.isVisible = false
+        -- self.view:insert(continueButton)
+        -- print ("criou continuebutton")
+
+
 
         background = display.newImageRect("BG.png", display.contentWidth, display.contentHeight - 45)
         background.x = display.contentCenterX
         background.y = display.contentCenterY
         sceneGroup:insert(background)
+
+        modo1 = display.newImageRect("modo1.png", 75, 50)
+        modo1.x = display.contentCenterX - 135
+        modo1.y = display.contentCenterY + 80
+        sceneGroup:insert(modo1)
+
+        modo2 = display.newImageRect("modo2.png", 75, 50)
+        modo2.x = display.contentCenterX - 50
+        modo2.y = display.contentCenterY + 80
+        sceneGroup:insert(modo2)
+
+        modo3 = display.newImageRect("modo3.png", 75, 50)
+        modo3.x = display.contentCenterX + 35
+        modo3.y = display.contentCenterY + 80
+        sceneGroup:insert(modo3)
+
+        continueButton = display.newImageRect("continuar.png", 75, 50)
+        continueButton.x = display.contentCenterX + 120
+        continueButton.y = display.contentCenterY + 80
+        sceneGroup:insert(continueButton)
 
         invisibleMenuButton = display.newImageRect("Settings-Button-2400px.png", 50, 50)
         invisibleMenuButton.y = 55
@@ -131,6 +162,9 @@ function scene:show( event )
         end
 
         continueButton:addEventListener('touch', goTo)
+        modo1:addEventListener('touch', goToGoldenMat)
+        modo2:addEventListener('touch', goToQuiz)
+        modo3:addEventListener('touch', goToShips)
         invisibleMenuButton:addEventListener('touch', goToSettings)
 
     elseif ( phase == "did" ) then

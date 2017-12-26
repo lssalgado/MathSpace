@@ -319,7 +319,7 @@ function scene:show( event )
                 font = native.systemFont,
                 fontSize = 30,
                 align = "right"})
-            self.view:insert(pointsDisplayMD)
+            self.view:insert(textoAtual)
             textoAtual:setFillColor(0,0,0)
 
 
